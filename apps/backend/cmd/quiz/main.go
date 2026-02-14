@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -21,21 +20,14 @@ func main() {
 	// Setup HTTP router
 	mux := http.NewServeMux()
 
-	// WebSocket endpoint
-	// wsHandler := handler.NewWebSocketHandler(hub)
 	wsHandler := handler.NewWebSocketHandler(hub)
 	mux.HandleFunc("/ws", wsHandler.HandleConnection)
 
 	// Health check endpoint
 	mux.HandleFunc("/health", handler.HealthCheck)
 
-	// Serve static files
-	fileServer := http.FileServer(http.Dir("../frontend/static"))
-	mux.Handle("/", fileServer)
-	fmt.Println(fileServer)
 	// Start server
 	log.Printf("🚀 Server starting on %s", cfg.ServerAddress)
-	log.Printf("📁 Serving static files from ./frontend/static")
 	log.Printf("🔌 WebSocket endpoint: ws://localhost%s/ws", cfg.ServerAddress)
 
 	if err := http.ListenAndServe(cfg.ServerAddress, mux); err != nil {
